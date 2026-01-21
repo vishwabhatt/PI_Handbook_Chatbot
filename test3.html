@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PI Handbook Assistant</title>
+
+  <style>
+
+    
+
+    body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background: url("./background.png") center / cover no-repeat;
+  filter: blur(4px);
+  transform: scale(1.05); /* avoids blur edges */
+  z-index: -2;
+}
+
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,.45);
+  z-index: -1;
+}
+
+
+    :root{
+      --accent:#2563eb;
+      --accent2:#1d4ed8;
+      --text:#0f172a;
+      --muted:#64748b;
+      --panel:#ffffff;
+      --soft:#f1f5f9;
+      --chip:#2563eb;
+      --chipText:#fff;
+      --border:rgba(15,23,42,.10);
+      --shadow:0 18px 45px rgba(2,6,23,.20);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+
+    html,body{height:100%;margin:0;overflow:hidden;}
+    body{
+       background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.65),
+      rgba(255,255,255,.65)
+    ),
+    url("./background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+    }
+
+    .page{
+      min-height:100vh;
+      position: relative;
+  z-index: 1; 
+  display:flex;
+  flex-direction:column;
+  padding: 18px 28px;
+  gap:14px;
+    }
+
+    .header{
+  width: 64%;
+  max-width: 1150px;
+  padding: 10px 6px;
+  color: #ffffff;
+}
+    .header h1{
+        font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow:
+    0 2px 8px rgba(0,0,0,.45),
+    0 0 1px rgba(0,0,0,.25);
+    }
+    .header p{
+      font-size: 13px;
+  color: rgba(255,255,255,.95);
+  text-shadow: 0 1px 4px rgba(0,0,0,.35);
+    }
+
+    .panel{
+        width: 64%;
+  max-width: 1150px;
+  min-width: 850px;
+  height: calc(100vh - 170px);
+  background: rgba(255,255,255,.96);
+  border-radius: 16px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow: 0 18px 45px rgba(0,0,0,.14);
+    }
+      /*width: 100%;
+  height: calc(100vh - 140px);
+  background: rgba(255,255,255,.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 14px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}*/
+
+    .panel-top{
+      padding:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.92));
+      border-bottom: 1px solid rgba(15,23,42,.06);
+    }
+
+    .header{
+  width: 64%;
+  max-width: 1150px;
+  padding: 10px 6px;
+  color: #ffffff;            /* brighter */
+}
+
+    .welcome{
+      background: rgba(219,234,254,.55);
+      border: 1px solid rgba(37,99,235,.12);
+      border-radius: 12px;
+      padding: 14px 16px;
+      max-width: 860px;
+    }
+    .welcome .title{
+      font-weight:800;
+      margin-bottom:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .welcome ul{
+      margin: 8px 0 0 18px;
+      color: rgba(15,23,42,.82);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .chips{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+  
+ /*   .chip{
+  background: rgba(219, 234, 254, 0.95); 
+  color: #1e3a8a;                       
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight:700;
+  font-size:12px;
+  cursor:pointer;
+  box-shadow: 0 6px 14px rgba(37,99,235,.12);
+  transition: transform .12s ease, opacity .12s ease; 
+} 
+*/
+
+.chip{
+  background: rgba(219, 234, 254, 0.95); /* soft academic blue */
+  color: #1e3a8a;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+
+  padding: 10px 18px;          /* ⬅️ bigger size */
+  border-radius: 999px;
+
+  font-weight: 700;
+  font-size: 13px;             /* ⬅️ slightly larger text */
+  cursor: pointer;
+
+  box-shadow: 0 6px 14px rgba(37,99,235,.12);
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background-color .18s ease;
+}
+
+.chip:hover{
+  transform: translateY(-2px) scale(1.08);  /* ⬅️ pop effect */
+  box-shadow: 0 12px 26px rgba(37,99,235,.22);
+  background: rgba(191, 219, 254, 0.98);    /* slightly brighter */
+}
+
+.chip:active{
+  transform: translateY(0px) scale(1.02);
+  box-shadow: 0 6px 14px rgba(37,99,235,.16);
+}
+
+   /* .chip:hover{ transform: translateY(-2px); opacity:.96; } */
+
+
+    .chip:active{ transform: translateY(0px) scale(.98); }
+
+   .chat-area{
+  flex:1;
+  padding:18px;
+  overflow-y:auto;   /* only vertical scroll */
+  overflow-x:hidden;
+  background:
+    radial-gradient(900px 420px at 50% 20%, rgba(37,99,235,.06), rgba(255,255,255,0) 60%),
+    rgba(255,255,255,.96);
+}
+
+    .msg{
+      display:flex;
+      gap:10px;
+      margin: 10px 0;
+      align-items:flex-start;
+    }
+    .msg.user{ justify-content:flex-end; }
+    .bubble{
+      max-width: 72%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      box-shadow: 0 10px 22px rgba(15,23,42,.06);
+      border: 1px solid rgba(15,23,42,.06);
+      font-size:14px;
+      line-height:1.35;
+      white-space: pre-wrap;
+      background: white;
+      color: var(--text);
+    }
+    .bubble.user{
+      background: rgba(37,99,235,.12);
+      border: 1px solid rgba(37,99,235,.15);
+    }
+
+    .avatar{
+      width:32px;
+      height:32px;
+      border-radius: 999px;
+      flex-shrink:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      font-size:11px;
+      color:white;
+      background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(99,102,241,.90));
+      box-shadow: 0 10px 22px rgba(37,99,235,.18);
+      overflow:hidden;
+    }
+    .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .typing{
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      margin-left:6px;
+    }
+    .dot{
+      width:7px;height:7px;border-radius:999px;
+      background: rgba(100,116,139,.7);
+      animation: blink 1s infinite ease-in-out;
+    }
+    .dot.d2{ animation-delay: .12s; }
+    .dot.d3{ animation-delay: .24s; }
+    @keyframes blink{
+      0%,50%{ opacity:1; }
+      51%,100%{ opacity:.18; }
+    }
+
+    .inputbar-wrap{
+      padding: 12px;
+      background: rgba(2,6,23,.20);
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .inputbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(15,23,42,.10);
+      border-radius: 999px;
+      padding: 10px 10px 10px 14px;
+      box-shadow: 0 18px 40px rgba(2,6,23,.18);
+    }
+    .inputbar input{
+      flex:1;
+      border:none;
+      outline:none;
+      background:transparent;
+      font-size:14px;
+    }
+    .send{
+      width:44px;
+      height:44px;
+      border-radius: 999px;
+      border:none;
+      cursor:pointer;
+      background: var(--accent);
+      color:white;
+      font-size:18px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 14px 34px rgba(37,99,235,.25);
+      transition: transform .12s ease, opacity .12s ease;
+    }
+    .send:hover{ opacity:.96; transform: translateY(-1px); }
+    .send:active{ transform: scale(.97); }
+
+    .footnote{
+      text-align:center;
+      color: rgba(255,255,255,.70);
+      font-size: 11px;
+      margin-top: 6px;
+    }
+
+    /* ===== THEME BACKGROUND IMAGES ===== */
+
+/*.theme-blue{
+  --accent:#2563eb;
+  --accent2:#1d4ed8;
+  --bg-image: url("./background.png");
+}*/
+
+/* ================= THEME : WARM OFFICE ================= */
+
+.theme-office-warm{
+  --bg-image: url("./background.png");
+
+  /* TEXT */
+  --text-main: #0f172a;
+  --text-muted: #475569;
+
+  /* SURFACES (this is the key part) */
+  --surface-soft: rgba(235, 242, 250, 0.95);   /* welcome box */
+  --surface-chip: #2563eb;                     /* buttons */
+  --surface-chip-text: #ffffff;
+  --surface-user: rgba(219, 234, 254, 0.95);   /* user bubble */
+
+  /* PANEL */
+  --panel-bg: rgba(255,252,248,0.96);
+  --panel-border: rgba(120,90,60,0.12);
+
+  /* ACCENT */
+  --accent: #2563eb;
+}
+
+
+.theme-teal{
+  --accent:#0f766e;
+  --accent2:#14b8a6;
+  --bg-image: url("images/backgrounds/bg-teal.jpg");
+}
+
+.theme-indigo{
+  --accent:#4338ca;
+  --accent2:#6366f1;
+  --bg-image: url("images/backgrounds/bg-indigo.jpg");
+}
+
+.theme-slate{
+  --accent:#334155;
+  --accent2:#64748b;
+  --bg-image: url("images/backgrounds/bg-slate.jpg");
+}
+
+.theme-sand{
+  --accent:#b08968;
+  --accent2:#ddb892;
+  --bg-image: url("images/backgrounds/bg-sand.jpg");
+}
+
+
+    @media (max-width: 1024px){
+  .panel,
+  .header{
+    width: 94%;
+    min-width: unset;
+  }
+}
+
+
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="header">
+      <h1>PI Handbook ChatBot</h1>
+      <p><h3 style="color: black;">Your AI guide for research policies, budgets, and compliance. 😃</h3></p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-top">
+        <div class="welcome">
+          <div class="title">👋 Welcome PIs.</div>
+          <div style="font-size:13px;color:rgba(15,23,42,.85);">I can help you with:</div>
+          <ul>
+            <li>Allowable & unallowable costs</li>
+            <li>Budget planning</li>
+            <li>Proposal timelines</li>
+            <li>2 CFR 200 guidance</li>
+          </ul>
+        </div>
+
+        <div class="chips">
+          <button class="chip" id="btnAllowable">Allowable Costs</button>
+          <button class="chip" id="btnBudget">Budget Rules</button>
+          <button class="chip" id="btnDeadlines">Deadlines</button>
+          <button class="chip" id="btnOAR">Contact OAR</button>
+        </div>
+      </div>
+
+      <div class="chat-area" id="chatLog"></div>
+
+      <div class="inputbar-wrap">
+        <div class="inputbar">
+          <input id="chatInput" placeholder="Type your question..." />
+          <button class="send" id="sendBtn" title="Send">➤</button>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  /*****************************************************************
+   * 1) SET YOUR N8N WEBHOOK ENDPOINT HERE
+   *    - TEST (while listening):   .../webhook-test/pi-handbook-chat
+   *    - PRODUCTION (recommended): .../webhook/pi-handbook-chat
+   *****************************************************************/
+  const CHATBOT_URL = "https://oaragenticai.app.n8n.cloud/webhook/pi-handbook-chat";
+
+  /*****************************************************************
+   * 2) EXPECTING N8N TO RETURN: { "reply": "..." }
+   *****************************************************************/
+  function parseReply(data){
+    return data.reply || "No reply field returned from n8n.";
+  }
+
+  const chatLog   = document.getElementById("chatLog");
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn   = document.getElementById("sendBtn");
+
+  const btnAllowable = document.getElementById("btnAllowable");
+  const btnBudget    = document.getElementById("btnBudget");
+  const btnDeadlines = document.getElementById("btnDeadlines");
+  const btnOAR       = document.getElementById("btnOAR");
+
+  const AI_AVATAR_SRC = "images/wolf.png"; // optional; falls back to "AI" if missing
+
+  function scrollBottom(){
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  function makeAvatar(type){
+    const a = document.createElement("div");
+    a.className = "avatar";
+    if(type === "ai"){
+      const img = document.createElement("img");
+      img.src = AI_AVATAR_SRC;
+      img.alt = "AI";
+      img.onerror = () => { a.textContent = "AI"; };
+      a.appendChild(img);
+    }else{
+      a.style.background = "linear-gradient(135deg, rgba(100,116,139,.95), rgba(148,163,184,.95))";
+      a.textContent = "YOU";
+    }
+    return a;
+  }
+
+  function addMessage(text, who){
+    const row = document.createElement("div");
+    row.className = "msg" + (who === "user" ? " user" : "");
+    if(who === "ai") row.appendChild(makeAvatar("ai"));
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble" + (who === "user" ? " user" : "");
+    bubble.textContent = text;
+
+    row.appendChild(bubble);
+
+    if(who === "user") row.appendChild(makeAvatar("user"));
+
+    chatLog.appendChild(row);
+    scrollBottom();
+    return row;
+  }
+
+  function addTyping(){
+    const row = document.createElement("div");
+    row.className = "msg";
+    row.appendChild(makeAvatar("ai"));
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = `Thinking
+      <span class="typing">
+        <span class="dot"></span>
+        <span class="dot d2"></span>
+        <span class="dot d3"></span>
+      </span>`;
+    row.appendChild(bubble);
+    chatLog.appendChild(row);
+    scrollBottom();
+    return row;
+  }
+
+async function sendToChatbot(message){
+  const res = await fetch(CHATBOT_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({ message })
+  });
+
+  if(!res.ok){
+    const txt = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status} from n8n. Body: ${txt}`);
+  }
+
+  const data = await res.json();
+  console.log("n8n raw response:", data);
+  return parseReply(data);
+}
+
+  async function handleSend(text){
+    const msg = (text ?? chatInput.value).trim();
+    if(!msg) return;
+
+    addMessage(msg, "user");
+    chatInput.value = "";
+
+    sendBtn.disabled = true;
+    chatInput.disabled = true;
+
+    const typingRow = addTyping();
+    try{
+      const reply = await sendToChatbot(msg);
+      typingRow.remove();
+      addMessage(reply, "ai");
+    }catch(e){
+      typingRow.remove();
+      addMessage("Sorry — I couldn't reach the assistant right now.", "ai");
+      console.error(e);
+    }finally{
+      sendBtn.disabled = false;
+      chatInput.disabled = false;
+      chatInput.focus();
+    }
+  }
+
+  sendBtn.addEventListener("click", () => handleSend());
+  chatInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") handleSend();
+  });
+
+  btnAllowable.addEventListener("click", () => handleSend(
+    "What costs are allowable and unallowable under 2 CFR 200?"
+  ));
+  btnBudget.addEventListener("click", () => handleSend(
+    "Help me understand budget rules and how to justify common costs."
+  ));
+  btnDeadlines.addEventListener("click", () => handleSend(
+    "What are typical internal proposal deadlines and submission timelines?"
+  ));
+  btnOAR.addEventListener("click", () => handleSend(
+    "How do I contact OAR and what info should I include?"
+  ));
+
+  addMessage("Welcome! Ask a question or click one of the buttons above to get started.", "ai");
+})();
+</script>
+</body>
+</html>
